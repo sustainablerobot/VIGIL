@@ -54,6 +54,7 @@ Python, Streamlit, Claude API, FAISS, sentence-transformers, LangChain, asyncio,
 
 This is a hackathon prototype, not a production system. Sensor input is currently simulated from CSV files - in a real deployment M1 would be replaced by actual ESP32/MQTT sensors, and the rest of the pipeline stays the same.
 
+## Architecture
 ![Architecture](architecture.png)
 
 ## Author
