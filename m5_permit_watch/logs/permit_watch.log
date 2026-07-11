@@ -1,0 +1,5 @@
+2026-07-03 14:18:11,528 [INFO] VIGIL.M5.PermitWatch: Permits loaded: 4 total, 3 active
+2026-07-03 14:18:11,529 [INFO] VIGIL.M5.PermitWatch: PermitWatch initialised | permits=4 | active=3
+2026-07-03 14:18:11,530 [INFO] VIGIL.M5.PermitWatch: Conflict callback registered: print_conflict
+2026-07-03 14:18:11,836 [WARNING] VIGIL.M5.PermitWatch: CONFLICT [GAS_THRESHOLD_BREACH] permit=PTW-2026-001 zone=C3 threshold=co_ppm_max=25.0 actual=31.0 action=SUSPEND_WORK
+2026-07-03 14:18:12,217 [WARNING] VIGIL.M5.PermitWatch: CONFLICT [GAS_THRESHOLD_BREACH] permit=PTW-2026-001 zone=C3 threshold=ch4_percent_lel_max=10.0 actual=16.6 action=SUSPEND_WORK

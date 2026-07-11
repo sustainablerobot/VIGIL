@@ -1,0 +1,177 @@
+[
+  {
+    "doc_id": "INC-001",
+    "type": "incident",
+    "title": "Visakhapatnam Steel Plant Coke Oven Explosion (January 2025)",
+    "date": "2025-01-15",
+    "facility": "Visakhapatnam Steel Plant (RINL)",
+    "location": "Visakhapatnam, Andhra Pradesh",
+    "fatalities": 8,
+    "injuries": 12,
+    "summary": "Entrapped gases triggered a sudden explosion in the coke oven battery during ongoing maintenance work. The facility had functioning safety systems including gas detectors, permit-to-work controls, and SCADA. An investigation by The Wire found that warning signals from gas pressure sensors existed, but no intelligence layer connected those readings to operational decisions in time. Hot work and maintenance activity were occurring in proximity to elevated gas readings without a system flagging the compound risk.",
+    "root_causes": [
+      "Gas pressure sensor warnings not connected to permit-to-work system",
+      "Hot work permit active near non-isolated equipment",
+      "No automated compound risk correlation across data sources",
+      "Manual handoffs between digital safety tools (per FICCI 2024 survey, 60%+ of large facilities rely on this)"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 8.4", "OISD-116 Clause 12.1", "OISD-116 Clause 8.2"],
+    "keywords": ["coke oven", "gas explosion", "hot work", "permit to work", "SCADA", "gas detector", "entrapped gas", "maintenance"],
+    "pattern_signature": "gas_warning+hot_work_permit+non_isolated_maintenance"
+  },
+  {
+    "doc_id": "INC-002",
+    "type": "incident",
+    "title": "HPCL Vizag Refinery Gas Leak (2024)",
+    "date": "2024-05-08",
+    "facility": "Hindustan Petroleum Corporation Limited Refinery",
+    "location": "Visakhapatnam, Andhra Pradesh",
+    "fatalities": 0,
+    "injuries": 6,
+    "summary": "A hydrocarbon gas leak occurred during a process unit shutdown sequence, with workers in the area at the time of release. Investigation found gas detection equipment was functioning correctly but the alert threshold did not account for the combination of shutdown procedures with personnel presence in the affected zone. Evacuation took longer than required due to lack of automated zone-based worker location tracking.",
+    "root_causes": [
+      "Shutdown procedure did not trigger automated worker evacuation protocol",
+      "No real-time correlation between process state changes and worker zone presence",
+      "Gas detection threshold static, not compound-risk aware"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 9.1", "OISD-116 Clause 7.1"],
+    "keywords": ["gas leak", "shutdown", "evacuation", "worker location", "process unit"],
+    "pattern_signature": "gas_warning+worker_presence+shutdown_sequence"
+  },
+  {
+    "doc_id": "INC-003",
+    "type": "incident",
+    "title": "Bhilai Steel Plant Confined Space Asphyxiation (2023)",
+    "date": "2023-09-22",
+    "facility": "Bhilai Steel Plant (SAIL)",
+    "location": "Bhilai, Chhattisgarh",
+    "fatalities": 3,
+    "injuries": 1,
+    "summary": "Three contract workers died of asphyxiation while performing inspection work inside a confined storage vessel. Oxygen levels had dropped below safe thresholds during the work period but continuous monitoring was not maintained throughout the entry duration — only a pre-entry gas test was conducted. No system tracked oxygen depletion trends during the multi-hour confined space entry.",
+    "root_causes": [
+      "Pre-entry gas test only, no continuous monitoring during multi-hour entry",
+      "Oxygen depletion trend not tracked or alerted",
+      "Confined space permit lacked real-time gas correlation requirement"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 9.1", "DGFASLI Confined Space Guidelines 2019"],
+    "keywords": ["confined space", "asphyxiation", "oxygen depletion", "continuous monitoring", "contract workers"],
+    "pattern_signature": "confined_space_permit+oxygen_depletion+no_continuous_monitoring"
+  },
+  {
+    "doc_id": "INC-004",
+    "type": "incident",
+    "title": "Bharat Petroleum Mumbai Refinery Fire During Shift Changeover (2022)",
+    "date": "2022-11-30",
+    "facility": "Bharat Petroleum Corporation Limited Refinery",
+    "location": "Mumbai, Maharashtra",
+    "fatalities": 2,
+    "injuries": 9,
+    "summary": "A fire broke out during a hot work operation that continued across a shift changeover. The outgoing shift supervisor's verbal handover did not fully convey the active hot work permit status and adjacent process conditions to the incoming team. The incoming team was unaware of elevated hydrocarbon vapour readings reported 40 minutes prior to changeover.",
+    "root_causes": [
+      "Verbal-only shift handover failed to transfer critical permit status",
+      "Hot work permit not automatically flagged as active during changeover window",
+      "No system-level alert for active permits crossing shift boundaries"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 7.1", "Factory Act 1948 Section 36"],
+    "keywords": ["shift changeover", "hot work", "fire", "handover", "verbal communication failure"],
+    "pattern_signature": "hot_work_permit+shift_changeover+communication_gap"
+  },
+  {
+    "doc_id": "INC-005",
+    "type": "incident",
+    "title": "IOCL Panipat Refinery Near-Miss: Uncertified Worker Gas Exposure (2024)",
+    "date": "2024-03-14",
+    "facility": "Indian Oil Corporation Limited Refinery",
+    "location": "Panipat, Haryana",
+    "fatalities": 0,
+    "injuries": 2,
+    "summary": "Two contract workers without gas monitor certification entered a work zone where H2S levels had risen above warning thresholds. Neither worker recognised the personal gas monitor alarm pattern. They continued work for approximately 12 minutes before a certified colleague in an adjacent zone noticed the alarm and intervened. Both workers required medical observation.",
+    "root_causes": [
+      "Uncertified workers assigned to zone with active gas hazard potential",
+      "No system check correlating worker certification status with zone risk level",
+      "Personal gas monitor alarms not connected to centralised alert system"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 6.3", "Factory Act 1948 Section 41-B"],
+    "keywords": ["uncertified worker", "H2S exposure", "gas monitor", "near miss", "training gap"],
+    "pattern_signature": "gas_warning+uncertified_workers"
+  },
+  {
+    "doc_id": "INC-006",
+    "type": "incident",
+    "title": "Reliance Jamnagar Complex: Sensor Outage During Active Maintenance (2023)",
+    "date": "2023-07-19",
+    "facility": "Reliance Industries Jamnagar Refinery Complex",
+    "location": "Jamnagar, Gujarat",
+    "fatalities": 0,
+    "injuries": 1,
+    "summary": "A gas detection sensor lost power for approximately 90 minutes due to a cable fault while maintenance work continued in the same zone. The sensor outage was not flagged as an elevated-risk condition since the system treated 'no data' the same as 'safe' rather than as a separate risk category requiring attention.",
+    "root_causes": [
+      "Sensor outage not treated as a distinct risk signal",
+      "No automated escalation when sensor data goes stale during active work",
+      "Maintenance continued without verification that monitoring was active"
+    ],
+    "oisd_clauses_violated": ["OISD-116 Clause 5.2", "DGMS Circular 2018"],
+    "keywords": ["sensor outage", "stale data", "cable fault", "maintenance", "monitoring gap"],
+    "pattern_signature": "stale_sensor+active_maintenance"
+  },
+  {
+    "doc_id": "REG-001",
+    "type": "regulation",
+    "title": "OISD-116 Clause 8.4 — Hot Work Permit Requirements Near Gas Hazard Zones",
+    "source_document": "OISD-116: Fire Protection Facilities for Petroleum Refineries and Oil/Gas Processing Plants",
+    "clause": "8.4",
+    "summary": "Hot work permits shall not be issued for any location where flammable gas concentration exceeds 10% of the Lower Explosive Limit (LEL) at the time of permit issuance. Continuous gas monitoring shall be maintained for the duration of hot work, and work shall cease immediately if gas concentration rises above this threshold at any point during the operation.",
+    "applies_when": ["hot_work_permit", "gas_warning"],
+    "keywords": ["hot work permit", "LEL", "gas concentration", "continuous monitoring"]
+  },
+  {
+    "doc_id": "REG-002",
+    "type": "regulation",
+    "title": "OISD-116 Clause 8.2 — Equipment Isolation Prior to Maintenance",
+    "source_document": "OISD-116: Fire Protection Facilities for Petroleum Refineries and Oil/Gas Processing Plants",
+    "clause": "8.2",
+    "summary": "All equipment undergoing maintenance in hazardous areas shall be fully isolated and depressurised prior to commencement of work, with isolation verified by a competent person and documented. Maintenance shall not proceed on equipment containing process gas under pressure without completed isolation.",
+    "applies_when": ["non_isolated_maintenance"],
+    "keywords": ["isolation", "depressurisation", "maintenance", "competent person verification"]
+  },
+  {
+    "doc_id": "REG-003",
+    "type": "regulation",
+    "title": "OISD-116 Clause 12.3 — Fire Watch Requirement for Hot Work",
+    "source_document": "OISD-116: Fire Protection Facilities for Petroleum Refineries and Oil/Gas Processing Plants",
+    "clause": "12.3",
+    "summary": "A dedicated fire watch person, separate from the worker performing hot work, shall be assigned and present for the entire duration of any hot work operation in hydrocarbon-handling areas. The fire watch shall have no other concurrent duties and shall be equipped with appropriate fire suppression equipment.",
+    "applies_when": ["hot_work_permit", "no_fire_watch"],
+    "keywords": ["fire watch", "hot work", "hydrocarbon area", "dedicated personnel"]
+  },
+  {
+    "doc_id": "REG-004",
+    "type": "regulation",
+    "title": "DGFASLI Confined Space Entry Guidelines 2019 — Continuous Atmospheric Monitoring",
+    "source_document": "DGFASLI Confined Space Guidelines 2019",
+    "clause": "Section 4.2",
+    "summary": "For any confined space entry exceeding 30 minutes duration, continuous atmospheric monitoring shall be maintained throughout the entry period, not limited to pre-entry testing alone. Oxygen levels below 19.5% shall trigger immediate evacuation. A dedicated attendant shall monitor readings continuously from outside the confined space.",
+    "applies_when": ["confined_space_permit", "oxygen_depletion"],
+    "keywords": ["confined space", "continuous monitoring", "oxygen threshold", "attendant"]
+  },
+  {
+    "doc_id": "REG-005",
+    "type": "regulation",
+    "title": "Factory Act 1948 Section 36 — Precautions Against Dangerous Fumes",
+    "source_document": "The Factories Act, 1948",
+    "clause": "Section 36",
+    "summary": "No person shall enter or remain in any confined space or area where dangerous fumes are likely to be present unless the area has been tested and certified safe, or the person is equipped with suitable breathing apparatus and a lifeline attended by a person outside.",
+    "applies_when": ["confined_space_permit", "shift_changeover"],
+    "keywords": ["dangerous fumes", "confined space", "breathing apparatus", "lifeline"]
+  },
+  {
+    "doc_id": "REG-006",
+    "type": "regulation",
+    "title": "Factory Act 1948 Section 41-B — Compulsory Disclosure and Worker Training for Hazardous Processes",
+    "source_document": "The Factories Act, 1948",
+    "clause": "Section 41-B",
+    "summary": "Workers engaged in hazardous processes shall be provided with adequate training, information, and personal protective equipment appropriate to the hazards present. Workers shall not be assigned to zones with active gas or chemical hazards without documented competency in hazard recognition and emergency response.",
+    "applies_when": ["gas_warning", "uncertified_workers"],
+    "keywords": ["worker training", "hazardous process", "competency", "PPE"]
+  }
+]

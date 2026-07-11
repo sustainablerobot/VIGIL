@@ -1,0 +1,43 @@
+{
+  "report_id": "RPT-C3-20260711-084431",
+  "generated_at": "2026-07-11 08:44:31 UTC",
+  "zone": "C3",
+  "risk_score": 90,
+  "severity": "CRITICAL",
+  "incident_summary": "VIGIL has detected a CRITICAL compound risk condition in Zone C3. Carbon monoxide has reached 27.75 PPM while a Hot Work Permit is active in the same zone. This is the identical compound pattern that preceded the Visakhapatnam Steel Plant explosion (January 2025, 8 fatalities) — gas accumulation combined with an active ignition source. Immediate evacuation and permit suspension are required.",
+  "hazardous_conditions": [
+    "Carbon Monoxide: 27.75 PPM (above 50 PPM warning threshold)",
+    "Oxygen: None% (normal: 20.9%; hazardous below 19.5%)",
+    "LEL: None% (alarm at 20% LEL)",
+    "Temperature: 35.64 degrees C (elevated above baseline)",
+    "Compound rule CR-001: Gas + Hot Work Permit (+35 pts)",
+    "Compound rule CR-002: Gas + Non-Isolated Maintenance (+30 pts)",
+    "Compound rule CR-006: Simultaneous Permits Across Multiple Zones (+10 pts)",
+    "Compound rule CR-010: Triple Compound: Gas + Hot Work + Non-Isolated Maintenance (+15 pts)"
+  ],
+  "permit_status": "Active permits in Zone C3: none recorded. ",
+  "worker_status": "0 worker(s) detected in Zone C3 at time of trigger. Immediate evacuation required.",
+  "compound_pattern": "The following compound condition was detected: Gas + Hot Work Permit + Gas + Non-Isolated Maintenance + Simultaneous Permits Across Multiple Zones. Each factor individually was within or near its threshold. Together they constitute a compound hazard identical to the pattern documented in the Visakhapatnam Steel Plant incident (January 2025). VIGIL detected this combination 50 risk points above the compound threshold, providing an estimated intervention window before conditions reach physically irreversible state.",
+  "regulatory_violations": [
+    "OISD-116 Clause 8.2",
+    "OISD-116 Clause 8.4",
+    "OISD-116 Clause 7.3",
+    "OISD-116 Clause 12.1",
+    "OISD-GDN-206 Section 4.3"
+  ],
+  "immediate_actions": [
+    "IMMEDIATE: Suspend all active permits in Zone C3 NOW",
+    "IMMEDIATE: Evacuate all 0 worker(s) from Zone C3",
+    "IMMEDIATE: Isolate all ignition sources in Zone C3 and adjacent zones",
+    "URGENT: Activate emergency gas dispersion / ventilation",
+    "URGENT: Notify Factory Inspector and DGFASLI emergency line",
+    "URGENT: Preserve all sensor logs and permit records as evidence",
+    "FOLLOW-UP: Do not re-enter zone until CO < 25 PPM and gas clearance re-issued",
+    "FOLLOW-UP: Conduct formal incident investigation per OISD-154 Section 5.2"
+  ],
+  "preliminary_root_cause": "Preliminary analysis indicates that no individual sensor reading crossed an alarm threshold independently. The critical hazard arose from the simultaneous occurrence of 4 compound conditions: Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Simultaneous Permits Across Multiple Zones. This compound pattern was not detectable by any single-sensor monitoring system and required cross-domain correlation across gas sensors, permit records, and worker location data. Root cause investigation should focus on: (1) why simultaneous permits were issued in this zone, (2) whether shift changeover re-verification was conducted, (3) whether gas clearance certificate was current at time of permit issuance.",
+  "evidence_reference": "RESP-C3-20260711-084431",
+  "generated_by": "VIGIL M8 Response Orchestrator",
+  "report_type": "PRELIMINARY - NOT FOR FINAL SUBMISSION",
+  "disclaimer": "This preliminary report is AI-generated within seconds of trigger. It must be reviewed and verified by a qualified safety officer before submission to regulatory authorities (DGFASLI/Factory Inspector)."
+}

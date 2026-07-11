@@ -1,0 +1,54 @@
+[
+  {
+    "maintenance_id": "MNT-2026-041",
+    "equipment_id": "COB-3-BATTERY",
+    "equipment_name": "Coke Oven Battery #3",
+    "zone": "C3",
+    "maintenance_type": "corrective",
+    "status": "in_progress",
+    "started_at": "2026-01-15T06:30:00Z",
+    "estimated_completion": "2026-01-15T12:00:00Z",
+    "isolation_done": false,
+    "depressurised": false,
+    "notes": "Flange leak repair. Process gas not fully isolated."
+  },
+  {
+    "maintenance_id": "MNT-2026-042",
+    "equipment_id": "PUMP-P22",
+    "equipment_name": "Pump P-22 (Cooling Circuit)",
+    "zone": "B2",
+    "maintenance_type": "preventive",
+    "status": "in_progress",
+    "started_at": "2026-01-15T08:00:00Z",
+    "estimated_completion": "2026-01-15T10:00:00Z",
+    "isolation_done": true,
+    "depressurised": true,
+    "notes": "Scheduled seal replacement. System isolated and depressurised."
+  },
+  {
+    "maintenance_id": "MNT-2026-043",
+    "equipment_id": "TANK-T14",
+    "equipment_name": "Storage Tank T-14",
+    "zone": "A1",
+    "maintenance_type": "inspection",
+    "status": "in_progress",
+    "started_at": "2026-01-15T07:15:00Z",
+    "estimated_completion": "2026-01-15T11:00:00Z",
+    "isolation_done": true,
+    "depressurised": true,
+    "notes": "Internal inspection. Vessel entered under confined space permit."
+  },
+  {
+    "maintenance_id": "MNT-2026-040",
+    "equipment_id": "COMP-C5",
+    "equipment_name": "Compressor C-5",
+    "zone": "D4",
+    "maintenance_type": "corrective",
+    "status": "completed",
+    "started_at": "2026-01-14T22:00:00Z",
+    "estimated_completion": "2026-01-15T06:00:00Z",
+    "isolation_done": true,
+    "depressurised": true,
+    "notes": "Bearing replacement completed. Returned to service."
+  }
+]

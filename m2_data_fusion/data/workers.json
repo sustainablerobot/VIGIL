@@ -1,0 +1,50 @@
+[
+  {
+    "worker_id": "W-101",
+    "name": "Ramesh Kumar",
+    "zone": "C3",
+    "badge_last_seen": "2026-06-29T08:41:00Z",
+    "role": "welder",
+    "certified_gas_monitor": true
+  },
+  {
+    "worker_id": "W-102",
+    "name": "Deepak Nair",
+    "zone": "C3",
+    "badge_last_seen": "2026-06-29T08:40:30Z",
+    "role": "fire_watch",
+    "certified_gas_monitor": true
+  },
+  {
+    "worker_id": "W-103",
+    "name": "Suresh Patil",
+    "zone": "A1",
+    "badge_last_seen": "2026-06-29T08:39:00Z",
+    "role": "inspector",
+    "certified_gas_monitor": false
+  },
+  {
+    "worker_id": "W-104",
+    "name": "Arvind Singh",
+    "zone": "B2",
+    "badge_last_seen": "2026-01-15T08:41:15Z",
+    "role": "mechanical_technician",
+    "certified_gas_monitor": false
+  },
+  {
+    "worker_id": "W-105",
+    "name": "Priya Menon",
+    "zone": "C3",
+    "badge_last_seen": "2026-01-15T08:40:00Z",
+    "role": "shift_supervisor",
+    "certified_gas_monitor": true
+  },
+  {
+    "worker_id": "W-106",
+    "name": "Mohan Das",
+    "zone": "C3",
+    "badge_last_seen": "2026-01-15T08:38:00Z",
+    "role": "operator",
+    "certified_gas_monitor": false
+  }
+]

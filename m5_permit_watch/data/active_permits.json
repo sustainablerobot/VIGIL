@@ -1,0 +1,106 @@
+[
+  {
+    "permit_id": "PTW-2026-001",
+    "permit_type": "hot_work",
+    "zone": "C3",
+    "issued_to": "Ramesh Kumar",
+    "issuer": "Safety Officer Mehta",
+    "contact_phone": "+91-891-555-0101",
+    "valid_from": "15:24",
+    "valid_until": "23:24",
+    "work_description": "Welding on coke oven battery #3 flange repair",
+    "fire_watch_assigned": true,
+    "fire_watch_name": "Deepak Nair",
+    "gas_test_at_issuance": {
+      "co_ppm": 12,
+      "ch4_percent_lel": 2.1,
+      "o2_percent": 20.8
+    },
+    "conflict_rules": {
+      "co_ppm_max": 25,
+      "ch4_percent_lel_max": 10,
+      "suspend_if_breach": true,
+      "resume_requires_retest": true
+    },
+    "status": "active",
+    "extensions": 0
+  },
+  {
+    "permit_id": "PTW-2026-002",
+    "permit_type": "confined_space",
+    "zone": "A1",
+    "issued_to": "Suresh Patil",
+    "issuer": "Safety Officer Mehta",
+    "contact_phone": "+91-891-555-0102",
+    "valid_from": "16:24",
+    "valid_until": "21:24",
+    "work_description": "Internal inspection of storage tank T-14",
+    "fire_watch_assigned": false,
+    "fire_watch_name": null,
+    "gas_test_at_issuance": {
+      "co_ppm": 8,
+      "ch4_percent_lel": 1.5,
+      "o2_percent": 20.9
+    },
+    "conflict_rules": {
+      "o2_percent_min": 19.5,
+      "co_ppm_max": 35,
+      "suspend_if_breach": true,
+      "resume_requires_retest": true
+    },
+    "status": "active",
+    "extensions": 0
+  },
+  {
+    "permit_id": "PTW-2026-003",
+    "permit_type": "general_maintenance",
+    "zone": "B2",
+    "issued_to": "Arvind Singh",
+    "issuer": "Shift Supervisor Joshi",
+    "contact_phone": "+91-891-555-0103",
+    "valid_from": "15:54",
+    "valid_until": "01:24",
+    "work_description": "Pump P-22 mechanical seal replacement",
+    "fire_watch_assigned": false,
+    "fire_watch_name": null,
+    "gas_test_at_issuance": {
+      "co_ppm": 5,
+      "ch4_percent_lel": 1.0,
+      "o2_percent": 20.9
+    },
+    "conflict_rules": {
+      "co_ppm_max": 50,
+      "ch4_percent_lel_max": 20,
+      "suspend_if_breach": false,
+      "resume_requires_retest": false
+    },
+    "status": "active",
+    "extensions": 0
+  },
+  {
+    "permit_id": "PTW-2026-004",
+    "permit_type": "hot_work",
+    "zone": "D4",
+    "issued_to": "Vinod Sharma",
+    "issuer": "Safety Officer Mehta",
+    "contact_phone": "+91-891-555-0104",
+    "valid_from": "12:24",
+    "valid_until": "14:24",
+    "work_description": "Cutting of corroded pipe section near furnace F-3",
+    "fire_watch_assigned": true,
+    "fire_watch_name": "Prakash Rao",
+    "gas_test_at_issuance": {
+      "co_ppm": 5,
+      "ch4_percent_lel": 1.2,
+      "o2_percent": 20.8
+    },
+    "conflict_rules": {
+      "co_ppm_max": 25,
+      "ch4_percent_lel_max": 10,
+      "suspend_if_breach": true,
+      "resume_requires_retest": true
+    },
+    "status": "expired",
+    "extensions": 0
+  }
+]

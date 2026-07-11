@@ -1,0 +1,20 @@
+2026-06-29 21:29:20,661 [WARNING] VIGIL.M3.RiskEngine: No Claude API key provided. LLM explanations will use fallback template.
+2026-06-29 21:29:20,662 [INFO] VIGIL.M3.RiskEngine: CompoundRiskEngine initialised | rules=10 | cooldown=5s | llm=fallback
+2026-06-29 21:29:20,663 [INFO] VIGIL.M3.RiskEngine: RiskEvent callback registered: display_event
+2026-06-29 21:29:20,669 [INFO] VIGIL.M3.RiskEngine: Zone C3: score=100 severity=CRITICAL suppressed=False rules=[Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Hot Work During Shift Changeover Window, Gas Hazard + Uncertified Workers, Simultaneous Permits Across Multiple Zones, Rapid Gas Escalation, Triple Compound: Gas + Hot Work + Non-Isolated Maintenance]
+2026-06-29 21:33:38,039 [INFO] VIGIL.M3.RiskEngine: CompoundRiskEngine initialised | rules=10 | cooldown=5s | llm=enabled
+2026-06-29 21:33:38,042 [INFO] VIGIL.M3.RiskEngine: RiskEvent callback registered: display_event
+2026-06-29 21:33:38,686 [WARNING] VIGIL.M3.RiskEngine: Claude API call failed: HTTP Error 400: Bad Request. Using fallback.
+2026-06-29 21:33:38,689 [INFO] VIGIL.M3.RiskEngine: Zone C3: score=100 severity=CRITICAL suppressed=False rules=[Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Hot Work During Shift Changeover Window, Gas Hazard + Uncertified Workers, Simultaneous Permits Across Multiple Zones, Rapid Gas Escalation, Triple Compound: Gas + Hot Work + Non-Isolated Maintenance]
+2026-06-30 11:03:37,853 [WARNING] VIGIL.M3.RiskEngine: No Claude API key provided. LLM explanations will use fallback template.
+2026-06-30 11:03:37,854 [INFO] VIGIL.M3.RiskEngine: CompoundRiskEngine initialised | rules=10 | cooldown=5s | llm=fallback
+2026-06-30 11:03:37,854 [INFO] VIGIL.M3.RiskEngine: RiskEvent callback registered: display_event
+2026-06-30 11:03:37,856 [INFO] VIGIL.M3.RiskEngine: Zone C3: score=100 severity=CRITICAL suppressed=False rules=[Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Hot Work During Shift Changeover Window, Gas Hazard + Uncertified Workers, Simultaneous Permits Across Multiple Zones, Rapid Gas Escalation, Triple Compound: Gas + Hot Work + Non-Isolated Maintenance]
+2026-06-30 11:03:58,945 [INFO] VIGIL.M3.RiskEngine: CompoundRiskEngine initialised | rules=10 | cooldown=5s | llm=enabled
+2026-06-30 11:03:58,946 [INFO] VIGIL.M3.RiskEngine: RiskEvent callback registered: display_event
+2026-06-30 11:03:59,390 [WARNING] VIGIL.M3.RiskEngine: Claude API call failed: HTTP Error 400: Bad Request. Using fallback.
+2026-06-30 11:03:59,392 [INFO] VIGIL.M3.RiskEngine: Zone C3: score=100 severity=CRITICAL suppressed=False rules=[Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Hot Work During Shift Changeover Window, Gas Hazard + Uncertified Workers, Simultaneous Permits Across Multiple Zones, Rapid Gas Escalation, Triple Compound: Gas + Hot Work + Non-Isolated Maintenance]
+2026-06-30 16:58:57,387 [INFO] VIGIL.M3.RiskEngine: CompoundRiskEngine initialised | rules=10 | cooldown=5s | llm=enabled
+2026-06-30 16:58:57,388 [INFO] VIGIL.M3.RiskEngine: RiskEvent callback registered: display_event
+2026-06-30 16:58:58,309 [WARNING] VIGIL.M3.RiskEngine: Claude API call failed: HTTP Error 400: Bad Request. Using fallback.
+2026-06-30 16:58:58,314 [INFO] VIGIL.M3.RiskEngine: Zone C3: score=100 severity=CRITICAL suppressed=False rules=[Gas + Hot Work Permit, Gas + Non-Isolated Maintenance, Hot Work During Shift Changeover Window, Gas Hazard + Uncertified Workers, Simultaneous Permits Across Multiple Zones, Rapid Gas Escalation, Triple Compound: Gas + Hot Work + Non-Isolated Maintenance]
