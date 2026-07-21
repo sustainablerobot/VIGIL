@@ -131,6 +131,17 @@ ZONE_PPE_SCENARIOS = {
         "B2": {"workers": 1, "violations": []},
         "D4": {"workers": 0, "violations": []},
     },
+    "multizone": {
+        # Zone C3: hot work zone -- worker without hard hat (matches CRITICAL risk state)
+        "C3": {"workers": 5, "violations": [
+            {"worker_id": "W3", "missing_ppe": ["hard_hat"]},
+        ]},
+        # Zone A1: confined space -- compliant workers
+        "A1": {"workers": 2, "violations": []},
+        # Zone B2: maintenance -- compliant workers
+        "B2": {"workers": 3, "violations": []},
+        "D4": {"workers": 0, "violations": []},
+    },
     "normal": {
         "C3": {"workers": 2, "violations": []},
         "A1": {"workers": 1, "violations": []},
