@@ -4,20 +4,21 @@ VIGIL -- M9 CCTV Vision Module
 OpenCV-based PPE detection that checks whether workers in a zone
 are wearing helmets and safety vests.
 
-Uses a pre-trained YOLOv8 model on mock image frames.
+Uses a pre-trained YOLOv8 model on live or mock image frames.
 Falls back to a rule-based colour-mask detector (OpenCV HSV thresholding)
 if ultralytics/YOLOv8 is not installed -- so the module always produces
 output regardless of environment.
 
 In production: plug live RTSP CCTV feed URLs here.
-For the demo: mock_frames/*.jpg are synthetic worker images per zone.
-Judges see: "Vision is one of our input streams."
-No judge will penalise a YOLOv8 pre-trained model on mock frames.
-They WILL penalise a broken demo.
+For the demo: set live_webcam=True to run real inference on a local
+webcam feed (cv2.VideoCapture), or leave it off to use mock_frames/*.jpg
+synthetic worker images per zone. RTSP integration with real plant
+cameras is the natural next step once factory access is available.
 
 WHAT THIS MODULE DOES
 ---------------------
-1. Loads a mock frame per zone (or generates a synthetic one)
+1. Captures a live webcam frame (if live_webcam=True), loads a real mock
+   frame from disk, or generates a synthetic one, per zone
 2. Runs YOLOv8 PPE detection OR colour-mask fallback
 3. Returns a CCTVReading: worker_count, ppe_compliant, violations list
 4. Fires registered callbacks so dashboard shows live CCTV status
@@ -427,6 +428,8 @@ class CCTVVisionModule:
         poll_interval: float = POLL_INTERVAL_SEC,
         zones: Optional[list] = None,
         data_dir: Optional[Path] = None,
+        live_webcam: bool = False,
+        camera_index: int = 0,
     ):
         self.scenario = scenario
         self.poll_interval = poll_interval
@@ -446,13 +449,44 @@ class CCTVVisionModule:
         self._yolo_available = self._yolo.load()
         self._colour_detector = ColourMaskDetector()
 
+        # Optional live webcam capture -- real frames, real inference.
+        # When enabled, the first zone in self.zones is fed from the
+        # webcam; remaining zones (if any) still use mock/synthetic frames.
+        self.live_webcam = live_webcam and CV2_AVAILABLE
+        self._webcam_capture = None
+        self._webcam_zone = self.zones[0] if self.zones else None
+        if live_webcam and not CV2_AVAILABLE:
+            logger.warning("live_webcam requested but OpenCV is not installed; ignoring.")
+        if self.live_webcam:
+            try:
+                self._webcam_capture = cv2.VideoCapture(camera_index)
+                if not self._webcam_capture.isOpened():
+                    logger.warning(f"Could not open webcam index {camera_index}; falling back to mock frames.")
+                    self._webcam_capture = None
+                    self.live_webcam = False
+            except Exception as e:
+                logger.warning(f"Webcam init failed ({e}); falling back to mock frames.")
+                self._webcam_capture = None
+                self.live_webcam = False
+
         backend = "yolov8" if self._yolo_available else (
             "colour_mask" if CV2_AVAILABLE else "synthetic"
         )
+        if self.live_webcam:
+            backend += "+live_webcam"
         logger.info(
             f"CCTVVisionModule ready | scenario={scenario} | "
             f"zones={self.zones} | backend={backend}"
         )
+
+    def stop(self) -> None:
+        self._running = False
+        if self._webcam_capture is not None:
+            try:
+                self._webcam_capture.release()
+            except Exception:
+                pass
+        logger.info("CCTVVisionModule stopped")
 
     # ------------------------------------------------------------------
     # Public API
@@ -468,10 +502,6 @@ class CCTVVisionModule:
         self._thread.start()
         logger.info("CCTVVisionModule polling started")
         return self._thread
-
-    def stop(self) -> None:
-        self._running = False
-        logger.info("CCTVVisionModule stopped")
 
     def get_latest(self, zone: str) -> Optional[CCTVReading]:
         with self._lock:
@@ -522,16 +552,17 @@ class CCTVVisionModule:
         expected_violations = zone_ppe["violations"]
 
         # Generate or load frame
+        is_live = self.live_webcam and zone == self._webcam_zone
         frame = self._get_frame(zone, expected_workers, expected_violations)
 
         # Run detection
         if self._yolo_available and frame is not None:
             violations, backend, workers = self._detect_yolo(
-                frame, zone, expected_workers, expected_violations
+                frame, zone, expected_workers, expected_violations, is_live=is_live
             )
         elif CV2_AVAILABLE and frame is not None:
             violations, backend, workers = self._detect_colour_mask(
-                frame, zone, expected_workers, expected_violations
+                frame, zone, expected_workers, expected_violations, is_live=is_live
             )
         else:
             violations = [PPEViolation(**v, confidence=0.85) for v in expected_violations]
@@ -583,7 +614,18 @@ class CCTVVisionModule:
     def _get_frame(
         self, zone: str, workers: int, violations: list
     ) -> Optional[np.ndarray]:
-        """Load real frame from disk, or generate synthetic one."""
+        """Capture a live webcam frame for the live zone, load a real
+        mock frame from disk, or generate a synthetic one."""
+        # Live webcam feed takes priority for its assigned zone
+        if self.live_webcam and zone == self._webcam_zone and self._webcam_capture is not None:
+            try:
+                ok, frame = self._webcam_capture.read()
+                if ok and frame is not None:
+                    return frame
+                logger.warning(f"Webcam read failed for zone {zone}; falling back to mock frame.")
+            except Exception as e:
+                logger.warning(f"Webcam read error for zone {zone}: {e}")
+
         # Try loading a real mock frame if it exists
         for ext in [".jpg", ".jpeg", ".png"]:
             frame_path = self.data_dir / f"zone_{zone.lower()}{ext}"
@@ -599,12 +641,15 @@ class CCTVVisionModule:
         return generate_synthetic_frame(zone, workers, violations)
 
     def _detect_yolo(
-        self, frame, zone, expected_workers, expected_violations
+        self, frame, zone, expected_workers, expected_violations, is_live: bool = False
     ) -> tuple:
         """
         Run YOLOv8 person detection, then colour-mask PPE check per person.
-        Falls back to scenario data for PPE status (pre-trained COCO model
-        detects persons but not PPE -- a fine-tuned model would handle PPE).
+        For mock/synthetic frames, falls back to scenario data for PPE status
+        (pre-trained COCO model detects persons but not PPE -- a fine-tuned
+        model would handle PPE). For a live webcam frame (is_live=True), no
+        scripted fallback is used: the reading reflects only what was
+        actually detected in that frame.
         """
         detections = self._yolo.detect(frame)
         persons = [d for d in detections if d["class"] == "person"]
@@ -633,8 +678,10 @@ class CCTVVisionModule:
                 ))
 
         # If no persons detected in frame but scenario says workers present,
-        # use scenario data (synthetic frame has workers we can see)
-        if not persons and expected_workers > 0:
+        # use scenario data (synthetic/mock frame has workers we can see).
+        # A live webcam frame is real ground truth -- "no persons detected"
+        # means zero workers, not a cue to substitute scripted violations.
+        if not persons and expected_workers > 0 and not is_live:
             violations = [
                 PPEViolation(
                     worker_id=v.get("worker_id", f"W{i}"),
@@ -645,19 +692,46 @@ class CCTVVisionModule:
             ]
             workers = expected_workers
 
-        return violations, "yolov8", workers
+        backend = "yolov8+live" if is_live else "yolov8"
+        return violations, backend, workers
 
     def _detect_colour_mask(
-        self, frame, zone, expected_workers, expected_violations
+        self, frame, zone, expected_workers, expected_violations, is_live: bool = False
     ) -> tuple:
         """
         Colour-mask PPE detection on the full frame.
         Divides frame into worker-sized strips and checks each for PPE colours.
+
+        For mock/synthetic frames (is_live=False), results are cross-checked
+        against the scenario's scripted violation list, since a single HSV
+        threshold on a synthetic strip is noisy and the scenario is the
+        source of truth for that demo run.
+
+        For a live webcam frame (is_live=True), there is no scripted
+        scenario for a real camera -- the colour-mask result is reported
+        as-is, directly off the detector.
         """
         h, w = frame.shape[:2]
-        workers = expected_workers
         violations = []
 
+        if is_live:
+            # Single live subject: treat the whole frame as one worker.
+            workers = 1
+            ppe = self._colour_detector.detect_ppe_in_region(frame, zone)
+            missing = []
+            if not ppe["has_hardhat"]:
+                missing.append("hard_hat")
+            if not ppe["has_vest"]:
+                missing.append("safety_vest")
+            if missing:
+                violations.append(PPEViolation(
+                    worker_id="W1",
+                    missing_ppe=missing,
+                    confidence=0.75,
+                ))
+            return violations, "colour_mask+live", workers
+
+        workers = expected_workers
         if workers == 0:
             return violations, "colour_mask", workers
 
@@ -700,10 +774,16 @@ class CCTVVisionModule:
 # CLI entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
+    import sys
+
+    use_webcam = "--webcam" in sys.argv
+
     print("\nVIGIL M9 -- CCTV Vision Module")
     print("================================")
+    if use_webcam:
+        print("Live webcam mode enabled (real inference, no scripted fallback for zone 1)\n")
 
-    cctv = CCTVVisionModule(scenario="vizag", poll_interval=2)
+    cctv = CCTVVisionModule(scenario="vizag", poll_interval=2, live_webcam=use_webcam)
 
     backend = "yolov8" if cctv._yolo_available else (
         "colour_mask" if CV2_AVAILABLE else "synthetic"
