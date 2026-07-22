@@ -55,7 +55,7 @@ from rag_incident_memory import RAGIncidentMemory
 from permit_watch import PermitWatch, PermitConflict
 from plant_heatmap import generate_plant_svg, build_zone_states_from_pipeline
 from response_orchestrator import ResponseOrchestrator
-from cctv_vision import CCTVVisionModule, CCTVReading
+from cctv_vision import CCTVVisionModule, CCTVReading, CV2_AVAILABLE
 
 # ---------------------------------------------------------------------------
 # Page config
@@ -118,7 +118,7 @@ def severity_color(sev: str) -> str:
 
 ZONES = ["A1", "B2", "C3", "D4"]
 FUSION_INTERVAL = 8
-TICK_INTERVAL = 3.0  # 3s per tick = gradual escalation over ~4 minutes
+TICK_INTERVAL = 8.0
 MAX_LOG = 100
 MAX_FEED = 15
 
@@ -127,8 +127,9 @@ MAX_FEED = 15
 # Pipeline
 # ---------------------------------------------------------------------------
 class VigilPipeline:
-    def __init__(self, scenario: str = "vizag"):
+    def __init__(self, scenario: str = "vizag", live_webcam: bool = False):
         self.scenario = scenario
+        self.live_webcam = live_webcam
         self.lock = threading.Lock()
 
         # State buckets
@@ -164,7 +165,7 @@ class VigilPipeline:
         )
         self.engine = CompoundRiskEngine(
             claude_api_key=os.getenv("ANTHROPIC_API_KEY"),
-            cooldown_sec=15,
+            cooldown_sec=300,
             min_score_to_alert=15,
         )
         self.fusion = DataFusionLayer(
@@ -184,6 +185,7 @@ class VigilPipeline:
             poll_interval=10,
             zones=ZONES,
             data_dir=VIGIL_ROOT / "m9_cctv_vision" / "data" / "mock_frames",
+            live_webcam=live_webcam,
         )
 
         # Wire callbacks
@@ -331,7 +333,8 @@ class VigilPipeline:
 # Session state
 # ---------------------------------------------------------------------------
 for _k, _v in [
-    ("pipeline", None), ("running", False), ("scenario", "vizag")
+    ("pipeline", None), ("running", False), ("scenario", "vizag"),
+    ("live_webcam", False),
 ]:
     if _k not in st.session_state:
         st.session_state[_k] = _v
@@ -369,15 +372,32 @@ with st.sidebar:
              "confined_space = oxygen depletion scenario.",
     )
 
+    live_webcam = st.checkbox(
+        "Live webcam (M9)",
+        value=st.session_state.get("live_webcam", False),
+        disabled=not CV2_AVAILABLE,
+        help="Runs real PPE detection on this machine's webcam for zone "
+             f"{ZONES[0]} instead of mock frames. Requires OpenCV and a "
+             "camera on whatever machine is running this Streamlit server "
+             "-- if the server isn't your laptop, this won't see your "
+             "webcam. Falls back to mock frames automatically if no "
+             "camera is found.",
+    )
+    if not CV2_AVAILABLE:
+        st.caption("⚠️ OpenCV not installed -- run `pip install opencv-python` "
+                   "then restart the app to enable live webcam.")
+
     c1, c2 = st.columns(2)
     with c1:
         if st.button("Start", use_container_width=True, type="primary"):
             if (st.session_state.pipeline is None
-                    or scenario != st.session_state.scenario):
+                    or scenario != st.session_state.scenario
+                    or live_webcam != st.session_state.get("live_webcam", False)):
                 if st.session_state.pipeline:
                     st.session_state.pipeline.stop()
-                st.session_state.pipeline = VigilPipeline(scenario=scenario)
+                st.session_state.pipeline = VigilPipeline(scenario=scenario, live_webcam=live_webcam)
                 st.session_state.scenario = scenario
+                st.session_state.live_webcam = live_webcam
             st.session_state.pipeline.start()
             st.session_state.running = True
     with c2:
@@ -480,7 +500,8 @@ state = st.session_state.pipeline.get_state()
 resp = state.get("active_response")
 if resp and resp.get("success"):
     tz = resp.get("zone", "?")
-    sc = resp.get("risk_score", 0)
+    live_event = state["risk_events"].get(tz)
+    sc = live_event["risk_score"] if live_event else resp.get("risk_score", 0)
     st.markdown(
         f"""<div style="background:#3a0000;border:2px solid #8B0000;
         border-radius:8px;padding:14px 20px;margin-bottom:12px;">
@@ -873,24 +894,61 @@ with tab_cctv:
                     else COLORS["HIGH"]
                 )
 
-                # Camera frame image
-                b64 = r.get("annotated_frame_b64")
-                if b64:
-                    st.markdown(
-                        f"<img src='data:image/jpeg;base64,{b64}' "
-                        f"style='width:100%;border-radius:6px;"
-                        f"border:2px solid {border_col};margin-bottom:6px;'>",
-                        unsafe_allow_html=True,
-                    )
-                else:
-                    # Placeholder when no frame yet
-                    st.markdown(
-                        f"""<div style="background:#111;border:2px solid {border_col};
-                        border-radius:6px;height:140px;display:flex;align-items:center;
-                        justify-content:center;color:#444;font-size:13px;
-                        margin-bottom:6px;">Zone {z} -- no frame yet</div>""",
-                        unsafe_allow_html=True,
-                    )
+                # Camera frame image — a genuinely live frame (this zone is
+                # the webcam zone and the backend reports "+live") always
+                # wins; only fall back to the static disk mock when this
+                # zone isn't live right now. Previously the disk mock was
+                # checked first unconditionally, so a real webcam frame
+                # could never be shown even when live_webcam was on.
+                _is_live_frame = "live" in str(status).lower()
+                _frame_shown = False
+
+                if _is_live_frame:
+                    b64 = r.get("annotated_frame_b64")
+                    if b64:
+                        st.markdown(
+                            f"<img src='data:image/jpeg;base64,{b64}' "
+                            f"style='width:100%;border-radius:6px;"
+                            f"border:2px solid {border_col};margin-bottom:4px;'>",
+                            unsafe_allow_html=True,
+                        )
+                        st.caption(f"Zone {z} — 🔴 LIVE  |  "
+                                   f"{'⚠ VIOLATION DETECTED' if viols > 0 else '✓ Compliant'}")
+                        _frame_shown = True
+
+                if not _frame_shown:
+                    _mock_dir = VIGIL_ROOT / "m9_cctv_vision" / "data" / "mock_frames"
+                    for _ext in [".jpg", ".jpeg", ".png"]:
+                        _fp = _mock_dir / f"zone_{z.lower()}{_ext}"
+                        if _fp.exists():
+                            try:
+                                _caption = f"Zone {z} — {'⚠ VIOLATION DETECTED' if viols > 0 else '✓ Compliant'}"
+                                st.image(str(_fp), use_container_width=True, caption=_caption)
+                                _frame_shown = True
+                            except Exception:
+                                pass
+                            break
+
+                if not _frame_shown:
+                    b64 = r.get("annotated_frame_b64")
+                    if b64:
+                        st.markdown(
+                            f"<img src='data:image/jpeg;base64,{b64}' "
+                            f"style='width:100%;border-radius:6px;"
+                            f"border:2px solid {border_col};margin-bottom:4px;'>",
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        st.markdown(
+                            f"""<div style="background:#111;border:2px solid {border_col};
+                            border-radius:6px;height:160px;display:flex;flex-direction:column;
+                            align-items:center;justify-content:center;
+                            margin-bottom:4px;">
+                            <div style="font-size:32px;margin-bottom:8px;">📷</div>
+                            <div style="color:#555;font-size:13px;">Zone {z} — CCTV Feed</div>
+                            </div>""",
+                            unsafe_allow_html=True,
+                        )
 
                 # Zone summary
                 st.markdown(
