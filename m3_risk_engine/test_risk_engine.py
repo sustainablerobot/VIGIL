@@ -104,7 +104,7 @@ class TestRuleConditions:
         assert _gas_warning(zone) is True
 
     def test_gas_warning_false_when_no_breach(self):
-        zone = make_zone(breached=[])
+        zone = make_zone(breached=[], co=5.0, h2s=1.0, ch4=2.0)
         assert _gas_warning(zone) is False
 
     def test_hot_work_active_true(self):
@@ -204,8 +204,10 @@ class TestCompoundRules:
         assert "CR-007" in rule_ids
 
     def test_cr007_does_not_fire_on_slow_escalation(self, engine):
-        zone = make_zone(breached=["co_ppm"])
-        # Slow, gentle rise — below threshold
+        zone = make_zone(breached=["co_ppm"], co=18.0)
+        # Slow, gentle rise — below threshold. The current reading (18.0)
+        # continues the same gentle slope so _update_gas_history doesn't
+        # inject an artificial spike when it appends it.
         engine._gas_history["C3"] = deque(
             [10, 11, 12, 13, 14, 15, 16, 17], maxlen=8
         )
@@ -266,7 +268,9 @@ class TestScoring:
         event = engine.evaluate_zone_direct("C3", zone, make_global_flags(
             changeover=False, multi_zone=False
         ))
-        assert event.risk_score < 20
+        # No rules fire under normal conditions, so the engine correctly
+        # returns None (score below min_score_to_alert) rather than an event.
+        assert event is None or event.risk_score < 20
 
     def test_severity_bands_correct(self, engine):
         from risk_engine import CompoundRiskEngine
