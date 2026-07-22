@@ -835,12 +835,12 @@ class CompoundRiskEngine:
         # Update gas history for escalation detection
         self._update_gas_history(zone_id, zone_snap)
 
-        # Evaluate every rule
         rules_fired: list[RuleFired] = []
         total_score = 0
 
         for rule in COMPOUND_RULES:
             fired = rule.evaluate(zone_snap, global_flags, self._gas_history)
+
             if fired:
                 contribution = min(rule.score, SCORE_CAP - total_score)
                 rules_fired.append(RuleFired(
